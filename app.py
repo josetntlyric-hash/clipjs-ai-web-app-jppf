@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import subprocess
 import os
@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app)
 @app.route('/')
 def inicio():
-    return "Motor ClipJS prendido"
+    return send_from_directory('.', 'index.html')
 @app.route('/cortar', methods=['POST'])
 def cortar():
     link = request.json.get('link')
