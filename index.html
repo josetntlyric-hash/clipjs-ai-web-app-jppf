@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClipJS - Pega link, saca clips</title>
+<style>
+body{background:#111;color:#fff;font-family:Arial;text-align:center;padding:20px}
+input{width:90%;padding:14px;border-radius:10px;border:0;font-size:16px}
+button{background:#2563eb;color:#fff;border:0;padding:14px 20px;border-radius:10px;font-size:16px;margin:10px;width:90%}
+.lock{background:#333}
+video{width:95%;border-radius:12px;margin-top:10px;background:#000}
+.card{background:#222;padding:15px;border-radius:12px;margin-top:15px}
+</style>
+</head>
+<body>
+<h2>🔥 ClipJS</h2>
+<p>Pega un link de YouTube y te saco los clips virales.</p>
+<input id="link" placeholder="Pega aquí tu link de YouTube...">
+<button onclick="generar()">✂️ Generar clips</button>
+<p id="estado"></p>
+<div class="card">
+<h3>✅ Tu clip GRATIS</h3>
+<video id="clip" controls></video><br>
+<a id="descargar" download="clip-gratis.mp4"><button>⬇️ Descargar clip gratis</button></a>
+</div>
+<div class="card">
+<h3>🔒 Los otros 59 clips</h3>
+<p>Los momentos más virales están aquí, con candado.</p>
+<button class="lock">🔒 Desbloquear 60 clips - Pagar</button>
+</div>
+<script>
+const MOTOR = "https://clipjs-ai-web-app-jppf.onrender.com";
+async function generar(){
+  let link = document.getElementById('link').value;
+  if(!link){ alert('Pega un link primero'); return; }
+  document.getElementById('estado').innerText = "⏳ Descargando y cortando... espera 30 seg...";
+  try{
+    let r = await fetch(MOTOR + '/cortar', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({link: link})
+    });
+    let d = await r.json();
+    if(d.ok){
+      let urlClip = MOTOR + d.clip_gratis;
+      document.getElementById('clip').src = urlClip;
+      document.getElementById('descargar').href = urlClip;
+      document.getElementById('estado').innerText = "✅ ¡Listo! Dale play, tu clip gratis SÍ suena";
+    } else {
+      document.getElementById('estado').innerText = "❌ " + d.error;
+    }
+  } catch(e){
+    document.getElementById('estado').innerText = "❌ El motor no está prendido todavía";
+  }
+}
+</script>
+</body>
+</html>
